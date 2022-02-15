@@ -2,7 +2,7 @@
 
 #include"CControladora.h"
 
-namespace SPRITE1 {
+namespace SPRITE {
 
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -18,8 +18,9 @@ namespace SPRITE1 {
 		{
 			InitializeComponent();
 			gr = this->CreateGraphics();
-			control = new CControladora(10, gr);
-			btpAsh = gcnew Bitmap("Ash.png");
+			control = new CControladora(gr , 10);
+			btpAsh = gcnew Bitmap("Recursos/Ash.png");
+			btpBala = gcnew Bitmap("Recursos/Bullet.png");
 		}
 
 	protected:
@@ -29,23 +30,20 @@ namespace SPRITE1 {
 			{
 				delete components;
 			}
-
 			delete control;
 		}
-	private: 
-
+	private:
 		Graphics^ gr;
-		/*Bufered Graphics.*/
-		BufferedGraphicsContext^ space;
-		BufferedGraphics^ bf;
-
 		CControladora* control;
-
-		/*Obteniendo imagenes.*/
+		/*Buffere Graphics*/
+		BufferedGraphicsContext^ space;
+		BufferedGraphics^ bfr;
+		/*Imagenes*/
 		Bitmap^ btpAsh;
+		Bitmap^ btpBala;
 
 		System::Windows::Forms::Timer^ Clock;
-	    System::ComponentModel::IContainer^ components;
+		System::ComponentModel::IContainer^ components;
 
 #pragma region Windows Form Designer generated code
 		void InitializeComponent(void)
@@ -62,7 +60,7 @@ namespace SPRITE1 {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(677, 448);
+			this->ClientSize = System::Drawing::Size(502, 348);
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
 			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
@@ -80,36 +78,33 @@ namespace SPRITE1 {
 		Void Clock_Tick(Object^ sender, EventArgs^ e) {
 
 			space = BufferedGraphicsManager::Current;
-			bf = space->Allocate(gr, this->ClientRectangle);
+			bfr = space->Allocate(gr, this->ClientRectangle);
 
-			bf->Graphics->Clear(Color::White);
+			bfr->Graphics->Clear(Color::WhiteSmoke);
 
-			control->mover(bf->Graphics);
-			control->pintar(bf->Graphics, btpAsh);
+			control->mover(bfr->Graphics);
+			control->pintar(bfr->Graphics, btpAsh, btpBala);
 
-			bf->Render(gr);
-
+			bfr->Render(gr);
 
 			if (control->you_win()) {
 				Clock->Enabled = false;
-				MessageBox::Show("\t¡Ganaste!\t");
+				MessageBox::Show("\tGanaste!\t");
 				Application::Exit();
 			}
 			if (control->you_defeat()) {
 				Clock->Enabled = false;
-				MessageBox::Show("\t¡Perdiste!\t");
+				MessageBox::Show("\tPerdiste!\t");
 				Application::Exit();
 			}
 
 			delete space;
-			delete bf;
+			delete bfr;
 		}
 		Void MyForm_KeyDown(Object^ sender, KeyEventArgs^ e) {
-
 			control->input(e, true);
 		}
 		Void MyForm_KeyUp(Object^ sender, KeyEventArgs^ e) {
-
 			control->input(e, false);
 		}
 	};

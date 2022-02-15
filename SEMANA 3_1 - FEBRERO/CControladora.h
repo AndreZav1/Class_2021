@@ -1,81 +1,61 @@
 #pragma once
-#ifndef CCONTROLADORA_H
-#define CCONTROLADORA_H
-
 #include"CAsh.h"
-#include"CBolas.h"
+#include"CBala.h"
 
 #include<vector>
 #include<ctime>
-
 using namespace System::Windows::Forms;
 
 class CControladora {
 
 private:
 	CAsh* my_ash;
-	std::vector<CBolas*>arr_bolas;
+	std::vector<CBala*>arr_bala;
+
+	void eliminar_bala_en(int pos) {
+		arr_bala.erase(arr_bala.begin() + pos);
+	}
+	void colisiones(Graphics^ gr) {
+
+		for (int i = 0; i < arr_bala.size(); i += 1) {
+			if (arr_bala.at(i)->area().IntersectsWith(my_ash->area())) {
+				arr_bala.at(i)->set_visible(false);
+				my_ash->decrease_hp();
+			}
+		}
+
+		Random r;
+
+		for (int i = 0; i < arr_bala.size(); i += 1) {
+			if (!arr_bala.at(i)->get_visible() || arr_bala.at(i)->get_dy() == 0) {
+				eliminar_bala_en(i);
+				arr_bala.push_back(new CBala(gr, r.Next(0, gr->VisibleClipBounds.Width - 50), r.Next(0, 20)));
+			}
+		}
+	}
 
 	int t;
 	int my_time;
-
-	int time_aparecer_bolas;
-
-	void aparecer_bolas(Graphics^ gr) {
-
-		Random r;
-
-		if (difftime(time(0), time_aparecer_bolas) > 4) {
-
-			for (int i = 0; i < 4; i += 1) {
-				arr_bolas.push_back(new CBolas(r.Next(0, (int)gr->VisibleClipBounds.Width - 50), r.Next(0, 20)));
-			}
-			time_aparecer_bolas = time(0);
-		}
-	}
-	void eliminar_bola_en(int pos) {
-
-		arr_bolas.erase(arr_bolas.begin() + pos);
-	}
-	void generar_bola(Graphics^ gr) {
-		Random r;
-		arr_bolas.push_back(new CBolas(r.Next(0, (int)gr->VisibleClipBounds.Width - 50), r.Next(0, 20)));
-	}
-	void collision(Graphics^ gr) {
-
-		for (int i = 0; i < arr_bolas.size(); i += 1) {
-			if (arr_bolas.at(i)->area().IntersectsWith(my_ash->area())) {
-				arr_bolas.at(i)->set_visible(false);
-				my_ash->decrease_hp();
-				generar_bola(gr);
-			}
-		}
-
-		for (int i = 0; i < arr_bolas.size(); i += 1) {
-			if (!arr_bolas.at(i)->get_visible()) {
-				eliminar_bola_en(i);
-			}
-		}
-	}
 public:
-	CControladora(int t, Graphics^ gr) {
-		my_ash = new CAsh((gr->VisibleClipBounds.Width / 2) - 68, (gr->VisibleClipBounds.Height) - 76);
-
+	CControladora(Graphics^ gr, int t) {
+		Random r;
+		my_ash = new CAsh((gr->VisibleClipBounds.Width / 2) - 68, (gr->VisibleClipBounds.Height) - 75);
+		for (int i = 0; i < 5; i += 1) {
+			arr_bala.push_back(new CBala(gr, r.Next(0, gr->VisibleClipBounds.Width - 50), r.Next(0, 20)));
+		}
 		this->t = t * 1000;
-
-		time_aparecer_bolas = time(0);
 	}
 	~CControladora() {
 		delete my_ash;
-		for each (CBolas * _iterator in arr_bolas) {
+		for each (CBala * _iterator in arr_bala) {
 			delete _iterator;
 		}
 	}
-	void input(KeyEventArgs^ e, bool validate) {
+	void input(KeyEventArgs^ e, bool validate_movement) {
 
 		int speed = 5;
 
-		if (validate) {
+		if (validate_movement) {
 
 			switch (e->KeyCode)
 			{
@@ -123,41 +103,37 @@ public:
 		}
 	}
 	void mover(Graphics^ gr) {
+		colisiones(gr);
 
-		aparecer_bolas(gr);
 		my_ash->mover(gr);
-		for each (CBolas * _iterator in arr_bolas) {
+		for each (CBala * _iterator in arr_bala) {
 			_iterator->mover(gr);
 		}
-		collision(gr);
 	}
-	void pintar(Graphics^ gr, Bitmap^ btpAsh) {
+	void pintar(Graphics^ gr, Bitmap^ btpAsh, Bitmap^ btpBala) {
 
-		my_time = (t - clock()) / 1000;
-		gr->DrawString("Tiempo: " + my_time, gcnew System::Drawing::Font("Times New Roman", 14), gcnew System::Drawing::SolidBrush(Color::Black), (int)gr->VisibleClipBounds.Width - 110, 0);
-		gr->DrawString("Vidas: " + my_ash->get_hp(), gcnew System::Drawing::Font("Times New Roman", 14), gcnew System::Drawing::SolidBrush(Color::Black), 10, 0);
+		my_time = t - clock();
+
+		gr->DrawString("Vidas: " + my_ash->get_hp(), gcnew Drawing::Font("Times New Roman", 14), gcnew Drawing::SolidBrush(Color::Black), 10, 0);
+		gr->DrawString("Tiempo: " + my_time, gcnew Drawing::Font("Times New Roman", 14), gcnew Drawing::SolidBrush(Color::Black), gr->VisibleClipBounds.Width - 120, 0);
 
 		my_ash->pintar(gr, btpAsh);
-		for each (CBolas * _iterator in arr_bolas) {
-			_iterator->pintar(gr);
+		for each (CBala * _iterator in arr_bala) {
+			_iterator->pintar(gr, btpBala);
 		}
 	}
-	bool you_defeat() {
+	bool you_win() {
 
-		if (my_ash->get_hp() == 0) {
+		if (my_time <= 0) {
 			return true;
 		}
 		return false;
 	}
-	bool you_win() {
+	bool you_defeat() {
 
-		if(my_time == 0){
+		if (my_ash->get_hp() <= 0) {
 			return true;
 		}
 		return false;
 	}
 };
-
-#endif // CCONTROLADORA_H
-
-

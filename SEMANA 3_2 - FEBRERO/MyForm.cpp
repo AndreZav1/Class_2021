@@ -3,7 +3,6 @@
 using namespace CLASEMIERCOLES;
 
 void main() {
-
 	Application::Run(gcnew MyForm);
 }
 

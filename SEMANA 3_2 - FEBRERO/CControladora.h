@@ -1,36 +1,36 @@
 #pragma once
 #ifndef CCONTROLADORA_H
-#define CCONTROLADORA_H
+#define CONTROLADORA_H
 
 #include"CPersonaje.h"
-#include"CVectores.h"
+#include"CVector.h"
 
 using namespace System::Windows::Forms;
 
 ref class CControladora {
 
 private:
+	/*Personaje*/
 	CPersonaje* personaje;
-	/*Vectores.*/
-	CVectores* vectores;
+	/*Vector*/
+	CVector* vector;
+
 	/*Bitmaps*/
 	Bitmap^ btpPerso;
 	Bitmap^ btpStone;
-
 public:
 	CControladora(Graphics^ gr) {
-
 		/*Instanciando personaje.*/
 		personaje = new CPersonaje(50, 50, 4, 3);
-		/*Instanciando clase vectores.*/
-		vectores = new CVectores(gr);
-		/*Instanciando Bitmaps.*/
+		/*Instanciando vector class.*/
+		vector = new CVector(gr);
+		/*Instanciando bitmaps.*/
 		btpPerso = gcnew Bitmap("Recursos/MiniPersonajes.png");
 		btpStone = gcnew Bitmap("Recursos/Piedra.png");
 	}
 	~CControladora() {
 		delete personaje;
-		delete vectores;
+		delete vector;
 	}
 
 	void input(KeyEventArgs^ e, bool validate_movement) {
@@ -38,6 +38,7 @@ public:
 		int speed = 10;
 
 		if (validate_movement) {
+
 			if (e->KeyCode == Keys::W) {
 				personaje->set_dy(-speed);
 			}
@@ -84,18 +85,19 @@ public:
 				}
 			}
 		}
+		
 	}
 
 	void move(Graphics^ gr) {
-		if (!vectores->collision_stone_(personaje->next_area())) {
+
+		if (!vector->collision_stone_(personaje->next_area())) {
 			personaje->move(gr);
 		}
 	}
 	void draw(Graphics^ gr) {
 		personaje->draw(gr, btpPerso);
-		vectores->draw(gr, btpStone);
+		vector->draw(gr, btpStone);
 	}
 };
-
 
 #endif

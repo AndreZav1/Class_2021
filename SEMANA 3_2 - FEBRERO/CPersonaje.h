@@ -18,8 +18,8 @@ public:
 
 		width = 31.83f;
 		height = 32.0f;
-
-		zoom = 2.0f;
+		
+		zoom = 1.8f;
 	}
 	~CPersonaje() {
 	}
@@ -31,7 +31,7 @@ public:
 		if (y + dy > 0 && y + (height * zoom) + dy < gr->VisibleClipBounds.Height) {
 			y += dy;
 		}
-		/*Cambiando el idy dependiendo a la dirección.*/
+
 		if (idy >= 0 && idy <= 3) {
 			if (dx > 0)idy = 2;
 			if (dx < 0)idy = 1;
@@ -45,13 +45,13 @@ public:
 			if (dy < 0)idy = 7;
 		}
 	}
-	void draw(Graphics^ gr, Bitmap^ btpPersonaje) {
+	void draw(Graphics^ gr, Bitmap^ btpPerso) {
 
 		Rectangle porcion = Rectangle(idx * width, idy * height, width, height);
 
-		gr->DrawImage(btpPersonaje, area(), porcion, GraphicsUnit::Pixel);
-		gr->DrawRectangle(gcnew Pen(Color::Blue, 2), area());
-		gr->DrawRectangle(gcnew Pen(Color::Red, 2), next_area());
+		gr->DrawImage(btpPerso, area(), porcion, GraphicsUnit::Pixel);
+		gr->DrawRectangle(gcnew Pen(Color::Blue, 3), area());
+		gr->DrawRectangle(gcnew Pen(Color::Red, 3), next_area());
 
 		if (dx != 0 || dy != 0) {
 			idx += 1;
@@ -101,10 +101,6 @@ public:
 				}
 			}
 		}
-	}
-
-	void set_idy(int value) {
-		idy = value;
 	}
 
 	Rectangle next_area() {

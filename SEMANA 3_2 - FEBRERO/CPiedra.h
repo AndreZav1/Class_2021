@@ -16,12 +16,12 @@ public:
 	}
 	~CPiedra() {
 	}
-	void draw(Graphics^ gr, Bitmap^ btpPiedra) {
-
+	void draw(Graphics^ gr, Bitmap^ btpStone) {
+		
 		Rectangle porcion = Rectangle(0 * width, 0 * height, width, height);
 
-		gr->DrawImage(btpPiedra, area(), porcion, GraphicsUnit::Pixel);
-		gr->DrawRectangle(gcnew Pen(Color::Black), area());
+		gr->DrawImage(btpStone, area(), porcion, GraphicsUnit::Pixel);
+		gr->DrawRectangle(gcnew Pen(Color::Black, 3), area());
 	}
 };
 

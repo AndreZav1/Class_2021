@@ -32,19 +32,18 @@ namespace CLASEMIERCOLES {
 			delete control;
 		}
 	private: 
+		/*Canvas*/
 		Graphics^ gr;
+		/*Buffered Graphics*/
 		BufferedGraphicsContext^ space;
 		BufferedGraphics^ buffer;
-
-		/*Fondo.*/
+		/*Bitmap*/
 		Bitmap^ background;
-
-		/*Controladora.*/
+		/*Controladora*/
 		CControladora^ control;
 
 		System::Windows::Forms::Timer^ Clock;
-	    System::ComponentModel::IContainer^ components;
-
+		System::ComponentModel::IContainer^ components;
 
 #pragma region Windows Form Designer generated code
 		void InitializeComponent(void)
@@ -61,7 +60,7 @@ namespace CLASEMIERCOLES {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(657, 409);
+			this->ClientSize = System::Drawing::Size(588, 396);
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
 			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
@@ -73,7 +72,6 @@ namespace CLASEMIERCOLES {
 #pragma endregion
 
 		Void MyForm_Load(Object^ sender, EventArgs^ e) {
-
 			Clock->Interval = 38;
 			Clock->Enabled = true;
 		}
@@ -81,14 +79,15 @@ namespace CLASEMIERCOLES {
 
 			space = BufferedGraphicsManager::Current;
 			buffer = space->Allocate(gr, this->ClientRectangle);
-			/*Pintando fondo.*/
+
 			buffer->Graphics->DrawImage(background, 0, 0, (int)buffer->Graphics->VisibleClipBounds.Width, (int)buffer->Graphics->VisibleClipBounds.Height);
 
+			/*Métodos de controladora*/
 			control->move(buffer->Graphics);
 			control->draw(buffer->Graphics);
 
+			/*Apertura Render*/
 			buffer->Render(gr);
-
 			delete space;
 			delete buffer;
 		}

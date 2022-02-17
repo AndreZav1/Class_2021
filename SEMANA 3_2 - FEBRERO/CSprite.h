@@ -3,19 +3,15 @@
 #define CSPRITE_H
 
 using namespace System::Drawing;
-using namespace System;
 
 class CSprite {
 
 protected:
-	/*Posiciones.*/
 	int x, y;
-	/*Dif.velocidad.*/
 	int dx, dy;
-	/*Dimensiones.*/
 	int width, height;
 
-	/*Zoom.*/
+	/*zoom*/
 	float zoom;
 
 public:
@@ -33,19 +29,17 @@ public:
 		x += dx;
 		y += dy;
 	}
-
 	virtual void draw(Graphics^, Bitmap^) = 0;
 
 	Rectangle area() {
 		return Rectangle(x, y, width * zoom, height * zoom);
 	}
 
-	/*Métodos acceso*/
-	void set_dx(int value) {
-		dx = value;
-	}
 	void set_dy(int value) {
 		dy = value;
+	}
+	void set_dx(int value) {
+		dx = value;
 	}
 };
 

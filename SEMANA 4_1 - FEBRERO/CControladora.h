@@ -1,39 +1,43 @@
 #pragma once
-#ifndef CCONTROLLER_H
-#define CCONTROLLER_H
+#ifndef CCONTROLADORA_H
+#define CCONTROLADORA_H
 
 #include"CChrono.h"
+#include"CEnemigo.h"
 #include"CVector.h"
 #include<fstream>
 
 using namespace System::Windows::Forms;
 using namespace std;
 
-ref class CController {
+ref class CControladora {
 
 private:
-	CVector* vector;
 	CChrono* chrono;
+	CVector* vector;
 	/*Bitmaps.*/
 	Bitmap^ btpChrono;
 	Bitmap^ btpEnemy;
-
 public:
-	CController(Graphics^ gr) {
+	CControladora(Graphics^ gr) {
 		chrono = new CChrono(50, 50);
-		vector = new CVector(gr, 2);
+		vector = new CVector(gr, 5);
+		/*Bitmaps.*/
 		btpChrono = gcnew Bitmap("chrono.png");
 		btpEnemy = gcnew Bitmap("enemy.png");
 	}
-	~CController() {
+	~CControladora() {
+		save_data();
 		delete chrono;
 		delete vector;
 	}
+
 	void input(KeyEventArgs^ e, bool validate_movement) {
 
-		int speed = 10;
+		int speed = 5;
 
 		if (validate_movement) {
+
 			switch (e->KeyCode)
 			{
 			case Keys::A: {
@@ -50,11 +54,11 @@ public:
 			}break;
 			case Keys::G: {
 				save_data();
-				MessageBox::Show("\tDatos guadados!\t");
+				MessageBox::Show("\tDatos Guardados!\t");
 			}break;
 			case Keys::L: {
 				load_data();
-				MessageBox::Show("\tDatos cargados!\t");
+				MessageBox::Show("\tDatos Cargados!\t");
 			}break;
 			}
 		}
@@ -77,6 +81,7 @@ public:
 			}
 		}
 	}
+
 	void move(Graphics^ gr) {
 		chrono->move(gr);
 		vector->move(gr, chrono);
@@ -88,17 +93,16 @@ public:
 		chrono->draw(gr, btpChrono);
 		vector->draw(gr, btpEnemy);
 	}
-
 private:
 	void save_data() {
 
 		ofstream file;
-		file.open("Datos.txt", ios::out);
+		file.open("Data.txt", ios::out);
 
-		file << chrono->get_x() << " " << chrono->get_y() << " " << chrono->get_idx() << " " << chrono->get_idy() << endl;
+		file << chrono->get_x() << " " << chrono->get_y() << " " << chrono->get_idy() << " " << chrono->get_idx() << endl;
 		file << vector->get_enemy_size() << endl;
 		for (int i = 0; i < vector->get_enemy_size(); i += 1) {
-			file << vector->get_enemy(i)->get_x() << " " << vector->get_enemy(i)->get_y() << endl;
+			file << vector->get_enemy_at(i)->get_x() << " " << vector->get_enemy_at(i)->get_y() << " " << vector->get_enemy_at(i)->get_idx() << " " << vector->get_enemy_at(i)->get_idy() << " " << vector->get_enemy_at(i)->get_dx() << " " << vector->get_enemy_at(i)->get_dy() << " " << vector->get_enemy_at(i)->get_type() << endl;
 		}
 
 		file.close();
@@ -106,21 +110,23 @@ private:
 	void load_data() {
 
 		ifstream file;
-		file.open("Datos.txt", ios::in);
+		file.open("Data.txt", ios::in);
 
 		int x, y, idx, idy;
 		file >> x >> y >> idx >> idy;
-		chrono->set_x(x); chrono->set_y(y); chrono->set_idy(idx); chrono->set_idy(idy);
+		chrono->set_x(x); chrono->set_y(y); chrono->set_idx(idx); chrono->set_idy(idy);
 		int size;
 		file >> size;
 
-		vector->clear_enemy_vector();
+		vector->clear_emeny_vector();
 		for (int i = 0; i < size; i += 1) {
-			file >> x, y;
-			vector->insert_enemy(new CEnemigo(x, y));
+			int dx, dy, type;
+			file >> x >> y >> idx >> idx >> dx >> dy >> type;
+			vector->insert_enemy(new CEnemigo(x, y, dx, dy, idx, idy, type));
 		}
 
 		file.close();
 	}
 };
+
 #endif

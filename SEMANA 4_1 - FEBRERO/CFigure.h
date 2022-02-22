@@ -29,7 +29,6 @@ public:
 	}
 	~CFigure() {
 	}
-
 	virtual void move(Graphics^) {
 		x += dx;
 		y += dy;
@@ -39,18 +38,24 @@ public:
 	Rectangle area() {
 		return Rectangle(x, y, width * zoom, height * zoom);
 	}
-    /*Métodos de acceso.*/
+	/*Métodos de acceso.*/
 	int get_x() {
 		return x;
 	}
 	int get_y() {
 		return y;
 	}
+	int get_idx() {
+		return idx;
+	}
 	int get_idy() {
 		return idy;
 	}
-	int get_idx() {
-		return idx;
+	int get_dx() {
+		return dx;
+	}
+	int get_dy() {
+		return dy;
 	}
 	void set_x(int value) {
 		x = value;
@@ -72,5 +77,4 @@ public:
 	}
 };
 
-
-#endif // !CFIGURE_H
+#endif

@@ -15,7 +15,6 @@ public:
 	~CChrono() {
 	}
 	void move(Graphics^ gr) {
-
 		if (x + dx > 0 && x + (width * zoom) + dx < gr->VisibleClipBounds.Width) {
 			x += dx;
 		}
@@ -27,11 +26,6 @@ public:
 		if (dx < 0)idy = 1;
 		if (dy > 0)idy = 0;
 		if (dy < 0)idy = 3;
-
-		/*if (dx == 0 && dy == 0) {
-			idy = 0;
-			idx = 0;
-		}*/
 	}
 	void draw(Graphics^ gr, Bitmap^ btp) {
 
@@ -44,7 +38,6 @@ public:
 		}
 		if (idx == 3)idx = 0;
 	}
-
 };
 
 #endif

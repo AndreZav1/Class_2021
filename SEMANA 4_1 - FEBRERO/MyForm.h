@@ -1,5 +1,5 @@
 #pragma once
-#include"CControler.h"
+#include"CControladora.h"
 
 namespace Project1 {
 
@@ -9,7 +9,6 @@ namespace Project1 {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-	using namespace std;
 
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
@@ -18,7 +17,7 @@ namespace Project1 {
 		{
 			InitializeComponent();
 			gr = this->CreateGraphics();
-			control = gcnew CController(gr);
+			control = gcnew CControladora(gr);
 		}
 
 	protected:
@@ -30,17 +29,16 @@ namespace Project1 {
 			}
 			delete control;
 		}
-
-	private:
-		/*Graphics.*/
+	private: 
+		/*Canvas.*/
 		Graphics^ gr;
 		/*Buffered Graphics.*/
 		BufferedGraphicsContext^ space;
 		BufferedGraphics^ buffer;
 		/*Controladora.*/
-		CController^ control;
-	private: System::Windows::Forms::Timer^ Clock;
-	private: System::ComponentModel::IContainer^ components;
+		CControladora^ control;
+		System::Windows::Forms::Timer^ Clock;
+	    System::ComponentModel::IContainer^ components;
 
 
 #pragma region Windows Form Designer generated code
@@ -58,7 +56,7 @@ namespace Project1 {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(820, 452);
+			this->ClientSize = System::Drawing::Size(709, 401);
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
 			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
@@ -73,7 +71,8 @@ namespace Project1 {
 			space = BufferedGraphicsManager::Current;
 			buffer = space->Allocate(gr, this->ClientRectangle);
 
-			buffer->Graphics->Clear(Color::Aqua);
+			/*Limpiar pantalla.*/
+			buffer->Graphics->Clear(Color::LightBlue);
 
 			control->move(buffer->Graphics);
 
